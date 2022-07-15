@@ -239,6 +239,7 @@ defmodule Protobuf.DSL do
   defp parse_field_opts_to_field_props(%FieldProps{} = props, opts) do
     Enum.reduce(opts, props, fn
       {:optional, optional?}, acc -> %FieldProps{acc | optional?: optional?}
+      {:proto3_optional, proto3_optional?}, acc -> %FieldProps{acc | proto3_optional?: proto3_optional?}
       {:required, required?}, acc -> %FieldProps{acc | required?: required?}
       {:enum, enum?}, acc -> %FieldProps{acc | enum?: enum?}
       {:map, map?}, acc -> %FieldProps{acc | map?: map?}
@@ -377,6 +378,7 @@ defmodule Protobuf.DSL do
   def field_default(_syntax, %FieldProps{default: default}) when not is_nil(default), do: default
   def field_default(_syntax, %FieldProps{repeated?: true}), do: []
   def field_default(_syntax, %FieldProps{map?: true}), do: %{}
+  def field_default(:proto3, %FieldProps{proto3_optional?: true}), do: nil
   def field_default(:proto3, props), do: type_default(props.type)
   def field_default(_syntax, _props), do: nil
 
